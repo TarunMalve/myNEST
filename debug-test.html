@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><title>Debug Test</title></head>
+<body>
+  <div id="test">JavaScript not running</div>
+  <script>
+    document.getElementById('test').textContent = 'JavaScript IS running!';
+    
+    // Test fetch
+    fetch('/src/main.tsx')
+      .then(r => r.text())
+      .then(text => {
+        const p = document.createElement('p');
+        p.textContent = 'main.tsx loaded, length: ' + text.length;
+        document.body.appendChild(p);
+      })
+      .catch(e => {
+        const p = document.createElement('p');
+        p.textContent = 'Error: ' + e.message;
+        document.body.appendChild(p);
+      });
+      
+    // Test ESM import
+    try {
+      import('/src/App.tsx')
+        .then(() => {
+          const p = document.createElement('p');
+          p.textContent = 'App.tsx ESM import SUCCESS';
+          document.body.appendChild(p);
+        })
+        .catch(e => {
+          const p = document.createElement('p');
+          p.textContent = 'App.tsx ESM import FAILED: ' + e.message + ' | stack: ' + (e.stack || '').slice(0, 200);
+          p.style.color = 'red';
+          document.body.appendChild(p);
+        });
+    } catch(e) {
+      document.body.innerHTML += '<p style="color:red">import() error: ' + e.message + '</p>';
+    }
+  </script>
+</body>
+</html>
